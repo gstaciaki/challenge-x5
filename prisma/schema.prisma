@@ -16,7 +16,7 @@ enum NotificationStatus {
 
 enum NotificationType {
   email
-  msm
+  sms
   push
 }
 
