@@ -1,18 +1,20 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { Paginated, PaginatorDto } from 'src/shared/dto/paginator.dto';
 import { Notification } from '@prisma/client';
-import { ProducerService } from 'src/producer/producer.service';
+import { queueOptions } from 'src/config/rabbitmq.options';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class NotificationService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly producerService: ProducerService,
+    @Inject(queueOptions.notification.name)
+    private readonly client: ClientProxy,
   ) {}
   async sendNotification(data: CreateNotificationDto) {
-    return this.producerService.sendMessage('notifications', data);
+    return this.client.emit('notifications', data);
   }
 
   async showNotifications(

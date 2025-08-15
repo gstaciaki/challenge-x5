@@ -1,12 +1,27 @@
-import { Transport, RmqOptions } from '@nestjs/microservices';
+import {
+  ClientProviderOptions,
+  RmqOptions,
+  Transport,
+} from '@nestjs/microservices';
 
-export const rabbitMQConfig = (): RmqOptions => ({
+const notificationQueue = 'notification';
+
+const rmqOptions: RmqOptions = {
   transport: Transport.RMQ,
   options: {
     urls: [process.env.RABBITMQ_URL ?? 'amqp://localhost:5672'],
-    queue: 'notifications_queue',
-    queueOptions: {
-      durable: true,
-    },
   },
-});
+};
+
+const notification: ClientProviderOptions = {
+  ...rmqOptions,
+  name: notificationQueue,
+  options: {
+    ...rmqOptions.options,
+    queue: notificationQueue,
+  },
+};
+
+export const queueOptions = {
+  notification,
+};
