@@ -13,6 +13,13 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - app-network
+  queue:
+    image: rabbitmq
+    ports:
+      - "5672:5672"
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbitmq_user
+      RABBITMQ_DEFAULT_PASS: rabbitmq_pass
 
 volumes:
   postgres_data:
